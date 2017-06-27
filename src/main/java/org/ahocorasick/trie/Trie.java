@@ -6,6 +6,7 @@ import org.ahocorasick.trie.handler.DefaultEmitHandler;
 import org.ahocorasick.trie.handler.EmitHandler;
 import org.ahocorasick.trie.handler.StatefulEmitHandler;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -20,7 +21,7 @@ import static java.lang.Character.isWhitespace;
  *
  * @author Robert Bor
  */
-public class Trie {
+public class Trie implements Serializable{
 
     private final TrieConfig trieConfig;
 
@@ -438,6 +439,34 @@ public class Trie {
          */
         public TrieBuilder removeOverlaps() {
             return ignoreOverlaps();
+        }
+    }
+
+    public static void main(String[] args){
+        Trie trie = Trie.builder()
+                .onlyWholeWordsWhiteSpaceSeparated()
+                .ignoreCase()
+                .ignoreOverlaps()
+                .addKeyword("hers")
+//                .addKeyword("his")
+//                .addKeyword("she")
+//                .addKeyword("he")
+                .build();
+        try {
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("test.ser"));
+            oos.writeObject(trie);
+            oos.close();
+        } catch(Exception exc){
+            exc.printStackTrace();
+        }
+
+        try{
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream("test.ser"));
+            Trie trie2 = (Trie)ois.readObject();
+            Collection<Emit> emits = trie2.parseText("us hers");
+            System.out.println(emits);
+        } catch(Exception exc) {
+            exc.printStackTrace();
         }
     }
 }

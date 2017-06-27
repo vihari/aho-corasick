@@ -1,6 +1,8 @@
 package org.ahocorasick.trie;
 
-public class TrieConfig {
+import java.io.Serializable;
+
+public class TrieConfig implements Serializable{
 
     private boolean allowOverlaps = true;
 
